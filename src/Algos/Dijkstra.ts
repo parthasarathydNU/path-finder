@@ -28,7 +28,7 @@ export function dijkstra(grid:Array<GridRow>, startNode:GridCell, finishNode:Gri
         let closestNode = unvisitedNodes.shift();
         
         // mark this node as visited
-        if(closestNode){
+        if(closestNode && !closestNode.isWall){
             // closestNode.isVisited = true;
 
             visitedNodes.push(closestNode);
@@ -49,12 +49,7 @@ export function dijkstra(grid:Array<GridRow>, startNode:GridCell, finishNode:Gri
 
     }
 
-
-
-
     return visitedNodes;
-
-    
 
 }
 

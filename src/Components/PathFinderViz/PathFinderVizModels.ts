@@ -5,7 +5,8 @@ type GridCell = {
     distance: number,
     isVisited: boolean,
     row: number,
-    col: number
+    col: number,
+    isWall : boolean
 }
 type GridRow = GridCell[];
 

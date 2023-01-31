@@ -1,14 +1,17 @@
-import React, { useEffect, useState } from 'react'
+import React, { ReactElement, useEffect, useState } from 'react'
 import GridCellNode from './GridCell/GridCell';
 import './PathFinderViz.scss';
 import { GridCell, GridRow } from './PathFinderVizModels';
 import {dijkstra}  from "../../Algos/Dijkstra"
+import { setgid } from 'process';
 
 function PathFinderViz() {
   
     const [grid, setStateGrid] = useState<GridRow[]>([]);
     const [isVizRunning, setIsVizRunning] = useState<boolean>(false);
     const [isBoardClear, setIsBoardClear] = useState<boolean>(true);
+    const [startWall, setStartWall] = useState<boolean>(false);
+    const [wallCells, setWallCells] = useState<Array<GridCell>>([]);
 
     const START_NODE_ROW = 5;
     const START_NODE_COL = 5;
@@ -36,6 +39,7 @@ function PathFinderViz() {
 
         if(!isVizRunning && !isBoardClear){
             generateBoard();
+            setWallCells([]);
         }
 
         
@@ -79,11 +83,8 @@ function PathFinderViz() {
             }, 5 * i);
             
 
-            // setTimerId(newTimer);
         }
 
-
-        
     }
 
     const runDijkstra = () => { 
@@ -104,19 +105,10 @@ function PathFinderViz() {
 
         }
 
-
-
     }
-
-
     
     useEffect(() => {
-      
-
         generateBoard();
-
-    
-      
     }, [])
 
     const generateCell = (row:number, col:number) => {
@@ -131,10 +123,39 @@ function PathFinderViz() {
             distance: Infinity,
             isVisited: false,
             row,
-            col
+            col,
+            isWall : false
         }
 
         return currentCell;
+
+    }
+
+    const mouseMoveCapture = (node:GridCell) : void => {
+        // console.log(node.row, node.col);
+        
+        if(startWall){
+
+            let wall = wallCells.slice();
+
+            wall.push(grid[node.row][node.col]);
+    
+            setWallCells(wall);
+        }
+
+
+    }   
+
+    const drawWall = () : void => {
+
+        let grid_ = grid;
+        for(const brick of wallCells){
+            let gridNode = grid_[brick.row][brick.col];
+            if(!gridNode.isStart && !gridNode.isFinish) grid_[brick.row][brick.col].isWall = true;
+        }
+
+        setStateGrid(grid_);
+        setStartWall(false);
 
     }
     
@@ -143,11 +164,11 @@ function PathFinderViz() {
         <button onClick={runDijkstra} >Run Dijkstra</button>
         <button onClick={clearBoard} >Clear Board</button>
 
-        <div className="grid">
+        <div className="grid" onMouseDown={() => setStartWall(true)} onMouseUp={() => drawWall()}>
 
             {grid?.length > 0 && grid.map( (row, idx) => (
                 <div className='row' key={idx}>
-                    {row.map( (node,id) => (<GridCellNode key={id} isStart={node.isStart} isFinish={node.isFinish} isVisited={node.isVisited} />))}
+                    {row.map( (node,id) => (<GridCellNode mouseCapture={mouseMoveCapture} key={id} node={node}  />))}
                 </div>
                 
             ))}

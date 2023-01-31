@@ -1,9 +1,16 @@
-import React from 'react'
+import React, {useRef} from 'react'
+import { GridCell } from '../PathFinderVizModels';
 import "./GridCell.scss"
-function GridCellNode({isStart, isFinish, isVisited}:{isStart:boolean, isFinish:boolean, isVisited: boolean}) {
+function GridCellNode({ node, mouseCapture}:{node:GridCell, mouseCapture:Function}) {
+    
+
+    const{isStart, isFinish, isVisited, isWall} = node;
+
     let extraClass = isStart ? "start" : isFinish ? "finish" : isVisited ?  "visited" : "";
+
+
   return (
-    <div className={`cell ${extraClass}`}></div>
+    <div onMouseOver={() => mouseCapture(node)} className={`cell ${extraClass} ${isWall ? "wall" : ""}`}></div>
   )
 }
 
