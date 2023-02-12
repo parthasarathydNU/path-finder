@@ -17,7 +17,7 @@
 
     &.visited{
         // background-color: orange;
-        animation: shapeShift 1000ms ease-out forwards;
+        animation: shapeShift 1500ms ease-out forwards;
     }
 
     &.wall{
@@ -27,8 +27,8 @@
     }
 
     &.shortestPathNode{
-        background-color: #fef4d7 !important;
-        animation: zoom 1000ms ease-out forwards;
+        background-color: #fef4d7 ;
+        animation: zoom 1500ms ease-out forwards;
     }
 }
 
