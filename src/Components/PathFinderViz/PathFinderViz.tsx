@@ -3,7 +3,6 @@ import GridCellNode from './GridCell/GridCell';
 import './PathFinderViz.scss';
 import { GridCell, GridRow } from './PathFinderVizModels';
 import {dijkstra}  from "../../Algos/Dijkstra"
-import { setgid } from 'process';
 
 function PathFinderViz() {
   
@@ -12,6 +11,7 @@ function PathFinderViz() {
     const [isBoardClear, setIsBoardClear] = useState<boolean>(true);
     const [startWall, setStartWall] = useState<boolean>(false);
     const [wallCells, setWallCells] = useState<Array<GridCell>>([]);
+    
 
     const START_NODE_ROW = 5;
     const START_NODE_COL = 5;
@@ -26,6 +26,7 @@ function PathFinderViz() {
             for (let j = 0; j < 50; j++) {
                 
                 row.push(generateCell(i, j));
+                document.getElementById(`cell-${i}-${j}`)?.classList.remove("visited", "wall", "shortestPathNode")
             }
             temp.push(row);
 
@@ -37,12 +38,11 @@ function PathFinderViz() {
 
     const clearBoard = () : void => {
 
-        if(!isVizRunning && !isBoardClear){
+        if(!isVizRunning){
             generateBoard();
             setWallCells([]);
         }
 
-        
     }
 
 
@@ -63,20 +63,19 @@ function PathFinderViz() {
 
                 let node = visitedNodes[i];
 
-                let newGrid = grid.slice();
-    
-                const newNode = {
-                    ...node,
-                    isVisited : true,
-                }
-    
-                newGrid[node.row][node.col] = newNode;
+                document.getElementById(`cell-${node.row}-${node.col}`)?.classList.add("visited");
 
-                setStateGrid(newGrid);
 
                 count++;
 
                 if(count == visitedNodes.length - 1){
+
+                    // Render the shortest path
+                    // we need to get the path followed from the finish node to the start node
+                    let shortestPathNodes = getShortestPathNodes(visitedNodes);
+
+                    animateShortestPath(shortestPathNodes);
+
                     setIsVizRunning(false);
                 }
 
@@ -103,8 +102,53 @@ function PathFinderViz() {
             // console.log(visitedNodes);
             updateViz(visitedNodes);
 
+
+
         }
 
+    }
+
+    function animateShortestPath(shortestPathNodes: Array<GridCell>) : void {
+
+        // we just change the background color of all these nodes to yellow
+        for(let i = 0; i < shortestPathNodes.length; i++){
+            setTimeout(() => {
+                let node = shortestPathNodes[i];
+                document.getElementById(`cell-${node.row}-${node.col}`)?.classList.add("shortestPathNode");
+            }, 5*i);
+            
+        }
+    }
+
+    /**
+     * Function that takes in the array of visited 
+     * nodes and returns the shortest path nodes in order
+     * @param visitedNodes Array of Grid Cells, 
+     * this will contains all the nodes that were visited, 
+     * from the start to the last visited node
+     * @returns 
+     */
+    function getShortestPathNodes(visitedNodes:Array<GridCell>) : Array<GridCell> {
+        
+        let shortestPath:Array<GridCell> = [];
+
+        // let's start from the finish node and iterate all the way back up to the start node, who's parent is null
+        // the finish node will be the last in the visited node list
+        let node = visitedNodes[visitedNodes.length-1];
+        
+        // check if this is the finish node
+        // because sometimes we cannot reach the finish node, so
+        // we do not have a path here
+        if(node.row !== FINISH_NODE_ROW || node.col !== FINISH_NODE_COL ){
+            return shortestPath;
+        }
+
+        while(node.previousNode != null){
+            shortestPath.unshift(node);
+            node = node.previousNode;
+        }
+
+        return shortestPath;
     }
     
     useEffect(() => {
@@ -124,24 +168,27 @@ function PathFinderViz() {
             isVisited: false,
             row,
             col,
-            isWall : false
+            isWall : false,
+            previousNode: null
         }
 
         return currentCell;
 
     }
 
-    const mouseMoveCapture = (node:GridCell) : void => {
+    const mouseMoveCapture = (node:GridCell, overRide:boolean) : void => {
         // console.log(node.row, node.col);
-        
-        if(startWall){
 
+        if(startWall || overRide){
             let wall = wallCells.slice();
 
             wall.push(grid[node.row][node.col]);
     
             setWallCells(wall);
+
+            document.getElementById(`cell-${node.row}-${node.col}`)?.classList.add("wall")
         }
+        
 
 
     }   
@@ -155,8 +202,18 @@ function PathFinderViz() {
         }
 
         setStateGrid(grid_);
-        setStartWall(false);
+        // setStartWall(false);
 
+    }
+
+    const handleMouseClick = (node:GridCell) : void => {
+        if(!startWall){
+            setStartWall(true);
+            mouseMoveCapture(node, true);
+        } else {
+            setStartWall(false);
+            drawWall();
+        }
     }
     
   return (
@@ -164,11 +221,18 @@ function PathFinderViz() {
         <button onClick={runDijkstra} >Run Dijkstra</button>
         <button onClick={clearBoard} >Clear Board</button>
 
-        <div className="grid" onMouseDown={() => setStartWall(true)} onMouseUp={() => drawWall()}>
+        <div className="grid"  >
 
             {grid?.length > 0 && grid.map( (row, idx) => (
                 <div className='row' key={idx}>
-                    {row.map( (node,id) => (<GridCellNode mouseCapture={mouseMoveCapture} key={id} node={node}  />))}
+                    {row.map( (node,id) => (
+                    <GridCellNode 
+
+                    mouseCapture={(d:GridCell) => mouseMoveCapture(d, false)} 
+                    
+                    mouseClick={(node:GridCell) => { handleMouseClick(node) }}
+
+                    key={id} node={node}  />))}
                 </div>
                 
             ))}

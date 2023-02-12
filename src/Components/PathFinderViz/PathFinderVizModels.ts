@@ -6,7 +6,8 @@ type GridCell = {
     isVisited: boolean,
     row: number,
     col: number,
-    isWall : boolean
+    isWall : boolean,
+    previousNode : GridCell | null
 }
 type GridRow = GridCell[];
 

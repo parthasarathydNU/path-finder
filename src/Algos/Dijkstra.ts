@@ -26,11 +26,16 @@ export function dijkstra(grid:Array<GridRow>, startNode:GridCell, finishNode:Gri
 
         // get the closest node - shift operation removes the first node from the array and returns it
         let closestNode = unvisitedNodes.shift();
+
+        
         
         // mark this node as visited
         if(closestNode && !closestNode.isWall){
             // closestNode.isVisited = true;
 
+            if(closestNode.distance == Infinity) return visitedNodes;
+
+            closestNode.isVisited = true;
             visitedNodes.push(closestNode);
 
             // if the closest node is the finishNode, we return the array
@@ -38,10 +43,10 @@ export function dijkstra(grid:Array<GridRow>, startNode:GridCell, finishNode:Gri
                 return visitedNodes;
             }
 
-            // update all the neighbours of the closest node
-            let neighbours = getNeighbours(grid, closestNode);
+            
 
-            updateNeighboursDistance(neighbours, closestNode.distance);
+            // update all the neighbours of the closest node
+            updateUnvisitedNeighbours(grid, closestNode);
 
         }
 
@@ -53,13 +58,16 @@ export function dijkstra(grid:Array<GridRow>, startNode:GridCell, finishNode:Gri
 
 }
 
-function updateNeighboursDistance(neighbours: Array<GridCell>, currentNodeDistance: number) : void{
+function updateUnvisitedNeighbours(grid: Array<GridRow>, closestNode:GridCell) : void{
+    let neighbours = getUnvisitedNeighbours(grid, closestNode);
+
     for(let i in neighbours){
-        neighbours[i].distance = currentNodeDistance + 1;
+        neighbours[i].distance = closestNode.distance + 1;
+        neighbours[i].previousNode = closestNode;
     }
 }
 
-function getNeighbours(grid: Array<GridRow> , node:GridCell) : Array<GridCell> {
+function getUnvisitedNeighbours(grid: Array<GridRow> , node:GridCell) : Array<GridCell> {
 
     let neighbours: Array<GridCell> = [];
 
@@ -79,7 +87,7 @@ function getNeighbours(grid: Array<GridRow> , node:GridCell) : Array<GridCell> {
     // can we go left ? 
     if(col > left) neighbours.push(grid[row][col-1]); 
 
-    return neighbours;
+    return neighbours.filter( (neighbor:GridCell) =>  !neighbor.isVisited);
 }
 
 
