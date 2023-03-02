@@ -1,14 +1,23 @@
 .wrapper{
     display: flex;
     flex-direction: column;
+    width: 80vw;
+
+    .actionButtons {
+        gap: 1rem;
+        display: flex;
+        margin: 1rem 0;  
+    }
     .grid{
 
         display: flex;
         flex-direction: column;
         gap: 5px;
+        width: 100%;
         .row{
             display: flex;
             gap: 5px;
+            justify-content: center;
         }
     
     }

@@ -1,7 +1,7 @@
 import React, {useRef} from 'react'
 import { GridCell } from '../PathFinderVizModels';
 import "./GridCell.scss"
-function GridCellNode({ node, mouseClick,  mouseCapture}:{node:GridCell,mouseClick:Function, mouseCapture:Function}) {
+function GridCellNode({ node, mouseClick,  mouseCapture, cells}:{node:GridCell,mouseClick:Function, mouseCapture:Function, cells:number}) {
     
 
     const{isStart, isFinish, isWall} = node;
@@ -16,7 +16,7 @@ function GridCellNode({ node, mouseClick,  mouseCapture}:{node:GridCell,mouseCli
 
 
   return (
-    <div id={`cell-${node.row}-${node.col}`} onClick={() => mouseClick(node)}  onMouseEnter={() => mouseCapture(node)} className={`cell ${extraClass} ${isWall ? "wall" : ""}`}></div>
+    <div style={{'width':`calc(100%/${cells})`}} id={`cell-${node.row}-${node.col}`} onClick={() => mouseClick(node)}  onMouseEnter={() => mouseCapture(node)} className={`cell ${extraClass} ${isWall ? "wall" : ""}`}></div>
   )
 }
 

@@ -3,6 +3,7 @@ import GridCellNode from './GridCell/GridCell';
 import './PathFinderViz.scss';
 import { GridCell, GridRow } from './PathFinderVizModels';
 import {dijkstra}  from "../../Algos/Dijkstra"
+import { Button } from '@mui/material';
 
 function PathFinderViz() {
   
@@ -16,12 +17,12 @@ function PathFinderViz() {
     const START_NODE_ROW = 5;
     const START_NODE_COL = 5;
     const FINISH_NODE_ROW = 10;
-    const FINISH_NODE_COL = 30;
+    const FINISH_NODE_COL = 15;
 
     const generateBoard = () : void => {
         const temp:GridRow[] = [];
         // create 15 rows and 50 columns
-        for(let i = 0; i < 15 ; i++){
+        for(let i = 0; i < 20 ; i++){
             let row:GridCell[] = [];
             for (let j = 0; j < 50; j++) {
                 
@@ -218,8 +219,20 @@ function PathFinderViz() {
     
   return (
     <section className='wrapper'>
-        <button onClick={runDijkstra} >Run Dijkstra</button>
-        <button onClick={clearBoard} >Clear Board</button>
+        
+        <div className='actionButtons'>
+            <Button disabled={!(!isVizRunning && isBoardClear)}  onClick={runDijkstra} variant="contained" size="small">
+            Run Dijkstra
+            </Button>
+
+            <Button disabled={isVizRunning} onClick={clearBoard} variant="contained" size="small">
+            Clear Board
+            </Button>
+        </div>
+
+        
+        {/* <button onClick={runDijkstra} >Run Dijkstra</button>
+        <button onClick={clearBoard} >Clear Board</button> */}
 
         <div className="grid"  >
 
@@ -232,7 +245,7 @@ function PathFinderViz() {
                     
                     mouseClick={(node:GridCell) => { handleMouseClick(node) }}
 
-                    key={id} node={node}  />))}
+                    key={id} node={node} cells={row.length}  />))}
                 </div>
                 
             ))}
