@@ -6,11 +6,13 @@
     border: 1px solid black;
     border-radius: 4%;
     background-color: white;
+    transition: background-color 500ms ease-in-out;
 
     // animation: zoom 1000ms ease-out forwards;
 
     &.start{
         background-color: green !important ;
+        
     }
 
     &.finish{

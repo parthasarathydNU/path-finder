@@ -183,11 +183,27 @@ function PathFinderViz() {
 
     }
 
+    const mouseLeaveCapture = (node:GridCell) : void => {
+
+        if(movingNode){
+            setTimeout(() => {
+                // remove start or finish class from this node
+                document.getElementById(`cell-${node.row}-${node.col}`)?.classList.remove(movingNode.isStart ? "start" : "finish") 
+            }, 100)
+            
+        }
+    }
+
     const mouseMoveCapture = (node:GridCell, overRide:boolean) : void => {
         // console.log(node.row, node.col);
 
         // we need to make these nodes the start or the end node
         console.log("are nodes changing ? ", areNodesChanging);
+
+        if(movingNode){
+            // make this node that color
+            document.getElementById(`cell-${node.row}-${node.col}`)?.classList.add(movingNode.isStart ? "start" : "finish") 
+        }
 
 
 
@@ -324,6 +340,8 @@ function PathFinderViz() {
                 <div className='row' key={idx}>
                     {row.map( (node,id) => (
                     <GridCellNode 
+
+                    mouseLeaveCapture={(d:GridCell) => mouseLeaveCapture(d)} 
 
                     mouseCapture={(d:GridCell) => mouseMoveCapture(d, false)} 
                     
