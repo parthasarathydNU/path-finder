@@ -4,6 +4,7 @@ import './PathFinderViz.scss';
 import { GridCell, GridRow } from './PathFinderVizModels';
 import {dijkstra}  from "../../Algos/Dijkstra"
 import { Button } from '@mui/material';
+import { isModifier } from 'typescript';
 
 function PathFinderViz() {
   
@@ -14,10 +15,15 @@ function PathFinderViz() {
     const [wallCells, setWallCells] = useState<Array<GridCell>>([]);
     
 
-    const START_NODE_ROW = 5;
-    const START_NODE_COL = 5;
-    const FINISH_NODE_ROW = 10;
-    const FINISH_NODE_COL = 15;
+    const [START_NODE_ROW, setStartNodeRow] = useState<number>(5);
+    const [START_NODE_COL, setStartNodeCol] = useState<number>(5);
+    const [FINISH_NODE_ROW, setFinishNodeRow] = useState<number>(10);
+    const [FINISH_NODE_COL, setFinishNodeCol] = useState<number>(15);
+
+    const [areNodesChanging, setAreNodesChanging] = useState<boolean>(false);
+    const [movingNode, setMovingNode] = useState<GridCell>();
+    
+    
 
     const generateBoard = () : void => {
         const temp:GridRow[] = [];
@@ -180,6 +186,11 @@ function PathFinderViz() {
     const mouseMoveCapture = (node:GridCell, overRide:boolean) : void => {
         // console.log(node.row, node.col);
 
+        // we need to make these nodes the start or the end node
+        console.log("are nodes changing ? ", areNodesChanging);
+
+
+
         if(startWall || overRide){
             let wall = wallCells.slice();
 
@@ -207,14 +218,87 @@ function PathFinderViz() {
 
     }
 
+    const checkIfStartOrFinishNode = (node:GridCell) : boolean => {
+        return (node.row == START_NODE_ROW && node.col == START_NODE_COL) || (node.row == FINISH_NODE_ROW
+            && node.col == FINISH_NODE_COL)
+    }
+
+    /**
+     * This function takes in a node and updates it in the main grid
+     * @param node The information of the node that has to be updated in the grid
+     */
+    const updateGridCell = (node : GridCell) : void => {
+        let tempGrid : Array<GridRow> = [...grid];
+
+        // update the cell
+        tempGrid[node.row][node.col] = node;
+
+        setStateGrid(tempGrid);
+    }
+
     const handleMouseClick = (node:GridCell) : void => {
-        if(!startWall){
-            setStartWall(true);
-            mouseMoveCapture(node, true);
-        } else {
-            setStartWall(false);
-            drawWall();
+
+        // if we have already started moving the nodes
+        if(areNodesChanging){
+            console.log("new location of node is here");
+            setAreNodesChanging(false);
+            // place the node here
+            if(movingNode){
+                document.getElementById(`cell-${node.row}-${node.col}`)?.classList.add(movingNode.isStart ? "start" : "finish")
+                
+
+                // update this in the cell as well
+                // we need to make the old location as a normal cell and the new location as the node
+                // make the old node a normal cell
+                let oldNode = Object.assign({}, movingNode);
+                oldNode.isStart = false;
+                oldNode.isFinish = false;
+
+                updateGridCell(oldNode);
+
+                // now make the new node start or finish
+                node.isStart = movingNode.isStart;
+                node.isFinish = movingNode.isFinish;
+
+                updateGridCell(node);
+
+                if(movingNode.isStart){
+                    setStartNodeRow(node.row);
+                    setStartNodeCol(node.col);
+                } else {
+                    setFinishNodeRow(node.row);
+                    setFinishNodeCol(node.col);
+                }
+
+                setMovingNode(undefined);
+            
+            }
+            
         }
+        else {
+            // if we click on the start / end node, 
+            // we need to see if this is the start node or the end node
+            if(checkIfStartOrFinishNode(node)){
+                console.log("clicked start or finish node")
+                setAreNodesChanging(!areNodesChanging);
+                setMovingNode(node);
+
+                // remove color from dom
+                document.getElementById(`cell-${node.row}-${node.col}`)?.classList.remove("start", "finish")
+                
+                
+            } else if(!areNodesChanging) {
+                if(!startWall){
+                    setStartWall(true);
+                    mouseMoveCapture(node, true);
+                } else {
+                    setStartWall(false);
+                    drawWall();
+                }
+            }    
+        }
+
+
     }
     
   return (

@@ -10,3 +10,4 @@ In this project I am building an algorithm visualizer application using React. I
 5. Add instructions on how to use the application
 7. Add new algorithms 
 8. Let users select color themes for the application
+9. Improve animation of walls appearing - size
