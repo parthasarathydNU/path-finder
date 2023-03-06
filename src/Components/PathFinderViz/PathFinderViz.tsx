@@ -5,6 +5,9 @@ import { GridCell, GridRow } from './PathFinderVizModels';
 import {dijkstra}  from "../../Algos/Dijkstra"
 import { Button } from '@mui/material';
 import { isModifier } from 'typescript';
+import Instructions from './Instructions/Instructions';
+import Footer from './Footer/Footer';
+
 
 function PathFinderViz() {
   
@@ -318,7 +321,9 @@ function PathFinderViz() {
     }
     
   return (
-    <section className='wrapper'>
+    <section className='main-wrapper'>
+
+        <Instructions />
         
         <div className='actionButtons'>
             <Button disabled={!(!isVizRunning && isBoardClear)}  onClick={runDijkstra} variant="contained" size="small">
@@ -352,6 +357,8 @@ function PathFinderViz() {
                 
             ))}
         </div>
+
+        
     </section>
   )
 }

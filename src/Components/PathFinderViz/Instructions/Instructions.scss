@@ -1,0 +1,29 @@
+.instructions-wrapper {
+    
+    font-size: 2rem;
+    text-align: left;
+    .title{
+
+    }
+
+    .subTitle{
+
+    }
+
+    .instructions{
+
+        list-style-type: none;
+        text-align: left;
+        padding-left: 0;
+
+        li {
+            list-style-type: none;
+            font-size: 2rem;
+            margin: 1rem 0;
+            background-color: rgba(216, 216, 216, 0.198);
+            width: fit-content;
+            padding: 1rem;
+            border-radius: 1rem;
+        }
+    }
+}

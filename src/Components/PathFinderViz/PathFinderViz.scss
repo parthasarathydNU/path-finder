@@ -1,4 +1,4 @@
-.wrapper{
+.main-wrapper{
     display: flex;
     flex-direction: column;
     width: 80vw;
@@ -6,7 +6,12 @@
     .actionButtons {
         gap: 1rem;
         display: flex;
-        margin: 1rem 0;  
+        margin: 1rem 0 2rem 0;  
+
+        button{
+            font-size: 1.2rem;
+            border-radius: 0.4rem;
+        }
     }
     .grid{
 
