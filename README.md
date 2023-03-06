@@ -4,10 +4,13 @@ In this project I am building an algorithm visualizer application using React. I
 # Features to add
 
 1. Make the start and end points draggable - done
+5. Add instructions on how to use the application - done
+
+
 2. Make the grid cells dynamic based on the viewport height and width
 3. Make it work on touch screen devices
 4. Let users control the grid dimension
-5. Add instructions on how to use the application
 7. Add new algorithms 
 8. Let users select color themes for the application
 9. Improve animation of walls appearing - size
+10. Make the app height and width responsive
