@@ -2,6 +2,9 @@
     
     font-size: 2rem;
     text-align: left;
+
+    max-height: calc(10vh + 8vw);
+    overflow-y: auto;
     .title{
 
     }
@@ -18,7 +21,7 @@
 
         li {
             list-style-type: none;
-            font-size: 2rem;
+            font-size: calc(1rem + 1vw);
             margin: 1rem 0;
             background-color: rgba(216, 216, 216, 0.198);
             width: fit-content;
