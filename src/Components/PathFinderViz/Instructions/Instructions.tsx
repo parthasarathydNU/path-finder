@@ -17,6 +17,7 @@ function Instructions() {
             <li>Once the user is satisfied with the start and end position of the node, they can run the algorithm by clicking on the "Run Dinjstra" button</li>
             <li>Once the algorithm is run, to clear the board select the clear board button</li>
             <li>Users' cannot run another algorithm / re run the same algorithm / clear the board when the current algo is processing</li>
+            <li>Users can click on an empty cell and move the mouse to draw a wall. Click again to stop drawing the wall</li>
         </ul>
 
     </div>
